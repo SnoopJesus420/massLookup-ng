@@ -17,7 +17,7 @@ def perform_nslookup(ip):
     return None
 
 def main():
-    input_file = 'urls.txt'
+    input_file = 'hostnames/IPs.txt'
     output_file = 'nslookup_hostnames.txt'
     max_workers = 10  # Number of parallel nslookup operations
 
