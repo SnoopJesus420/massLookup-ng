@@ -1,3 +1,4 @@
+import argparse
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
@@ -17,12 +18,35 @@ def perform_nslookup(ip):
     return None
 
 def main():
-    input_file = 'hostnames/IPs.txt'
-    output_file = 'nslookup_hostnames.txt'
-    max_workers = 10  # Number of parallel nslookup operations
+    # Setup command line argument parser
+    parser = argparse.ArgumentParser(
+        description='Perform parallel massLookup-ng operations on a list of IP addresses or domain names.',
+        epilog='Example usage: python massLookup-ng -i ips.txt -o hostnames.txt',
+        formatter_class=argparse.RawTextHelpFormatter
+    )
 
-    # Read all IPs/Domains from the file
-    with open(input_file, 'r') as f:
+    # Input file argument
+    parser.add_argument(
+        '-i', '--input',
+        required=True,
+        help='Specify the input file path. The file should contain one IP address or domain name per line.'
+    )
+
+    # Output file argument
+    parser.add_argument(
+        '-o', '--output',
+        required=True,
+        help='Specify the output file path where resolved hostnames will be saved.'
+    )
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Number of parallel nslookup operations
+    max_workers = 10
+
+    # Read all IPs/Domains from the input file
+    with open(args.input, 'r') as f:
         ips = [line.strip() for line in f if line.strip()]
 
     # Use ThreadPoolExecutor to execute nslookup in parallel
@@ -30,12 +54,12 @@ def main():
         results = list(executor.map(perform_nslookup, ips))
 
     # Write results to the output file
-    with open(output_file, 'w') as out_f:
+    with open(args.output, 'w') as out_f:
         for hostname in results:
             if hostname:
                 out_f.write(hostname + '\n')
 
-    print("NSLookup completed. Results saved in", output_file)
+    print("NSLookup completed. Results saved in", args.output)
 
 if __name__ == '__main__':
     main()
