@@ -36,7 +36,7 @@ def main():
     # Setup command line argument parser
     parser = argparse.ArgumentParser(
         description='Perform parallel massLookup-ng operations on a list of IP addresses or domain names.',
-        epilog='Example usage: python massLookup-ng -i ips.txt -o hostnames.txt',
+        epilog='Example usage: python massLookup-ng -i ips.txt -o hostnames.txt -t 20',
         formatter_class=argparse.RawTextHelpFormatter
     )
 
@@ -54,11 +54,19 @@ def main():
         help='Specify the output file path where resolved hostnames will be saved.'
     )
 
+    # Threads argument
+    parser.add_argument(
+        '-t', '--threads',
+        type=int,
+        default=10,
+        help='Specify the number of threads to use for parallel lookups (default: 10).'
+    )
+
     # Parse the arguments
     args = parser.parse_args()
 
     # Number of parallel nslookup operations
-    max_workers = 10
+    max_workers = args.threads
 
     # Read all IPs/Domains from the input file
     with open(args.input, 'r') as f:
@@ -74,7 +82,7 @@ def main():
             if result:
                 out_f.write(result + '\n')
 
-    print("NSLookup completed. Results saved in", args.output)
+    print(f"NSLookup completed using {max_workers} threads. Results saved in", args.output)
 
 if __name__ == '__main__':
     main()
