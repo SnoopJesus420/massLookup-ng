@@ -35,7 +35,7 @@ def perform_nslookup(query):
 def main():
     # Setup command line argument parser
     parser = argparse.ArgumentParser(
-        description='Perform parallel massLookup-ng operations on a list of IP addresses or domain names.',
+        description='Perform parallel nslookup operations on a list of IP addresses or domain names.',
         epilog='Example usage: python massLookup-ng -i ips.txt -o hostnames.txt -t 20',
         formatter_class=argparse.RawTextHelpFormatter
     )
