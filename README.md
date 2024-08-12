@@ -3,14 +3,14 @@ A simple python script to perform a forward/reverse DNS A record look up against
 
 # Usage
 ```
-python3 massLookup-ng -i <hostnames/IPs> -o <results.txt>
+python3 massLookup-ng.py [-h] -i INPUT -o OUTPUT [-t THREADS]
 ```
 
 # Help
 ```
-usage: masslookup-ng.py [-h] -i INPUT -o OUTPUT
+usage: test.py [-h] -i INPUT -o OUTPUT [-t THREADS]
 
-Perform parallel massLookup-ng operations on a list of IP addresses or domain names.
+Perform parallel nslookup operations on a list of IP addresses or domain names.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -18,6 +18,8 @@ optional arguments:
                         Specify the input file path. The file should contain one IP address or domain name per line.
   -o OUTPUT, --output OUTPUT
                         Specify the output file path where resolved hostnames will be saved.
+  -t THREADS, --threads THREADS
+                        Specify the number of threads to use for parallel lookups (default: 10).
 
-Example usage: python massLookup-ng -i ips.txt -o hostnames.txt
+Example usage: python3 massLookup-ng -i ips.txt -o hostnames.txt -t 20
 ```
