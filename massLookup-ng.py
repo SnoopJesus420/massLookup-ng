@@ -2,19 +2,34 @@ import argparse
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
-def perform_nslookup(ip):
+def perform_nslookup(query):
     try:
         # Perform nslookup using subprocess
-        result = subprocess.run(['nslookup', ip], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        result = subprocess.run(['nslookup', query], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         output = result.stdout
 
-        # Extract hostname
+        # Check for errors in the output
+        if "Can't find" in output or "No answer" in output:
+            return None
+
+        # Extract IP address
+        ip_address = None
         for line in output.split('\n'):
-            if 'name =' in line:
-                # Remove the final dot and return the hostname
-                return line.split('name =')[-1].strip().strip('.')
+            if 'Address:' in line and '#' not in line:
+                # Get the IP address (skipping the line with the DNS server address)
+                ip_address = line.split('Address:')[-1].strip()
+                # Only return the IP address if it is not an IPv6 address
+                if ':' not in ip_address:
+                    return ip_address
+                else:
+                    # Store the IPv6 address in case no IPv4 address is found
+                    ip_v6_address = ip_address
+
+        # If no IPv4 address was found, return the stored IPv6 address
+        return ip_v6_address if 'ip_v6_address' in locals() else None
+
     except Exception as e:
-        print(f"Error processing {ip}: {e}")
+        print(f"Error processing {query}: {e}")
     return None
 
 def main():
@@ -47,17 +62,17 @@ def main():
 
     # Read all IPs/Domains from the input file
     with open(args.input, 'r') as f:
-        ips = [line.strip() for line in f if line.strip()]
+        queries = [line.strip() for line in f if line.strip()]
 
     # Use ThreadPoolExecutor to execute nslookup in parallel
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        results = list(executor.map(perform_nslookup, ips))
+        results = list(executor.map(perform_nslookup, queries))
 
     # Write results to the output file
     with open(args.output, 'w') as out_f:
-        for hostname in results:
-            if hostname:
-                out_f.write(hostname + '\n')
+        for result in results:
+            if result:
+                out_f.write(result + '\n')
 
     print("NSLookup completed. Results saved in", args.output)
 
