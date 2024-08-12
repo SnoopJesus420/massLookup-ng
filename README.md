@@ -8,8 +8,6 @@ python3 massLookup-ng.py [-h] -i INPUT -o OUTPUT [-t THREADS]
 
 # Help
 ```
-usage: test.py [-h] -i INPUT -o OUTPUT [-t THREADS]
-
 Perform parallel nslookup operations on a list of IP addresses or domain names.
 
 optional arguments:
