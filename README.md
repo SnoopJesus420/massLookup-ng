@@ -1,5 +1,5 @@
 # masLookup-ng
-A simple python script to perform a forward/reverse DNS A record look up against a list of IPs/hostnames.
+A simple python script to perform a forward/reverse DNS A record look up against a list of IPs/hostnames... with multithreading... >:)
 
 # Usage
 ```
